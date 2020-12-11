@@ -24,13 +24,13 @@ If you run the script as a normal non-root user then the script will be download
 
 You can create a single-host Docker Swarm on your laptop with a single command. You don't need any additional software to Docker 17.06 or greater. You can also run these commands on a Linux VM or cloud host.
 
-This is how you initialize your master node:
+This is how you <span class='definition'>initialize your master node</span>:
 
 ```bash
 $ docker swarm init
 ```
 
-If you have more than one IP address you may need to pass a string like `--advertise-addr eth0` to this command.
+If you have <span class='important'>more than one IP address</span> you may need to pass a string like `--advertise-addr eth0` to this command.
 
 Take a note of the join token
 
@@ -41,7 +41,7 @@ Log into your worker node and type in the output from `docker swarm init` on the
 It's also important to pass the `--advertise-addr` string to any hosts which have a public IP address.
 
 !!! warning
-    Check whether you need to enable firewall rules for the [Docker Swarm ports listed here](https://docs.docker.com/engine/swarm/swarm-tutorial/).
+    Check whether you need to <span class='important'>enable firewall rules</span> for the [Docker Swarm ports listed here](https://docs.docker.com/engine/swarm/swarm-tutorial/).
 
 ## 2.0 Deploy the stack
 
@@ -93,7 +93,7 @@ Within a few seconds (or minutes if on a poor WiFi connection) the API gateway a
 
 ## 2.2 Deploy functions from the OpenFaaS Function Store
 
-You can find many different sample functions from the community through the OpenFaaS Function Store. The Function Store is built into the UI portal and also available via the CLI.
+You can find many different sample functions from the community through the <span class='definition'>OpenFaaS Function Store</span>. The Function Store is built into the UI portal and also available via the CLI.
 
 To search the store:
 
