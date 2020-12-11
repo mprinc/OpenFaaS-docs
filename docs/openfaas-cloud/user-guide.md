@@ -2,8 +2,7 @@
 
 This guide applies to:
 
-* [OpenFaaS Cloud: Self-hosted](/openfaas-cloud/self-hosted/)
-* [OpenFaaS Cloud: The Community Cluster](/openfaas-cloud/community-cluster/)
+* [OpenFaaS Cloud: Self-hosted](/openfaas-cloud/self-hosted/github)
 
 ## The guide
 
@@ -23,7 +22,7 @@ This can be public or private.
 
 ### Install the GitHub App
 
-Now find your GitHub App URL. If you're using The Community Cluster, [you will find that here](/openfaas-cloud/community-cluster).
+Now find your GitHub App URL.
 
 Otherwise, click Settings -> Developer Settings -> GitHub Apps. Find yours and click "Edit" and then "Install App"
 

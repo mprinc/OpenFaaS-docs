@@ -4,26 +4,23 @@ You can obtain TLS certificates for the OpenFaaS API Gateway and for your functi
 
 We will use the following components:
 
- - OpenFaaS installed via [helm][openfaas-helm] or (`helm template` if you can't use `tiller`)
- - [cert-manager][cert-manager]
  - [Nginx IngressController][nginx-ingress]
+ - OpenFaaS installed via [helm][openfaas-helm]
+ - [cert-manager][cert-manager]
 
 We will split this tutorial into two parts:
 
 - 1.0 TLS for the Gateway
 - 2.0 TLS and custom domains for your functions
+- 3.0 REST-style API mapping for your functions
 
 ## 1.0 TLS for the Gateway
 
 This part guides you through setting up all the pre-requisite components to enable TLS for your gateway. You can then access your gateway via a URL such as `https://gw.example.com` and each function such as: `https://gw.example.com/function/nodeinfo`.
 
-### Configure Helm and Tiller
+### Configure Helm
 
-First install Helm and the Tiller [following the instructions provided by Helm][helm-install]
-
-### Install OpenFaaS
-
-Follow the instructions found in the [OpenFaaS Helm Chart](https://github.com/openfaas/faas-netes/tree/master/chart/openfaas#deploy-openfaas). As part of these instructions you will create a basic-auth password to secure the Gateway's API and UI.
+First install Helm v3 [following the instructions provided by Helm][helm-install]
 
 ### Install nginx-ingress
 
@@ -32,7 +29,8 @@ This example will use a Kubernetes [IngressController](https://kubernetes.io/doc
 Add Nginx using the helm `chart-ingress`:
 
 ```sh
-$ helm install stable/nginx-ingress --name nginxingress --set rbac.create=true
+$ helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+$ helm install nginxingress ingress-nginx/ingress-nginx
 ```
 
 The full configuration options for nginx [can be found here][nginx-configuration].
@@ -46,10 +44,16 @@ nginxingress-nginx-ingress-controller        LoadBalancer   192.168.137.172   13
 
 Caveats: 
 
+* Alternatively, use [arkade](https://github.com/alexellis/arkade) to install nginx-ingress.
+
+  ```sh
+  arkade install ingress-nginx
+  ```
+
 * If you do not have a cloud provider for your Kubernetes cluster, but have a public IP, then you can install Nginx in "host-mode" and use the IP of one or more of your nodes for the DNS record.
 
   ```sh
-  $ helm install stable/nginx-ingress --name nginxingress --set rbac.create=true,controller.hostNetwork=true controller.daemonset.useHostPort=true,dnsPolicy=ClusterFirstWithHostNet,controller.kind=DaemonSet
+  $ helm install  nginxingress ingress-nginx/ingress-nginx --set rbac.create=true,controller.hostNetwork=true controller.daemonset.useHostPort=true,dnsPolicy=ClusterFirstWithHostNet,controller.kind=DaemonSet
   ```
 
   Taken from tutorial: [Setup a private Docker registry with TLS on Kubernetes](https://github.com/alexellis/k8s-tls-registry)
@@ -57,6 +61,16 @@ Caveats:
 * If you do not have a public IP for your Kubernetes cluster, then you can use a project like [Inlets](https://inlets.dev) and bypass using cert-manager. Inlets has around half a dozen examples of configurations for Kubernetes.
 
   [HTTPS for your local endpoints with inlets and Caddy](https://blog.alexellis.io/https-inlets-local-endpoints/)
+
+### Install OpenFaaS
+
+Follow the instructions found in the [OpenFaaS Helm Chart](https://github.com/openfaas/faas-netes/tree/master/chart/openfaas#deploy-openfaas). As part of these instructions you will create a basic-auth password to secure the Gateway's API and UI.
+
+Alternatively, use [arkade](https://github.com/alexellis/arkade) to install openfaas:
+
+  ```sh
+  arkade install openfaas
+  ```
 
 ### Create a DNS record
 
@@ -365,6 +379,81 @@ Then delete one if you need to via: `kubectl delete fni/name -n openfaas`.
 ```yaml
 spec:
   ingressType: "skipper"
+```
+
+## 3.0 REST-style API mapping for your functions
+
+The FunctionIngress discussed above provides a simple way to create a custom URL mapping scheme for your functions. This is a common request from users, and means that you can map your functions into a REST-style API.
+
+
+Here we map three functions to a REST-style API:
+
+```
+https://gateway.example.com/function/env -> https://api.example.com/v1/env/
+https://gateway.example.com/nodeinfo -> https://api.example.com/v1/nodeinfo/
+https://gateway.example.com/certinfo -> https://api.example.com/v1/certinfo/
+```
+
+```
+faas-cli deploy --image functions/alpine:latest --name env --fprocess env
+faas-cli store deploy nodeinfo
+faas-cli store deploy certinfo
+```
+
+Save the following in a file "fni.yaml" and customise it as required.
+
+Then run `kubectl apply -f fni.yaml`.
+
+To create the TLS Issuer, see the steps above.
+
+```yaml
+apiVersion: openfaas.com/v1alpha2
+kind: FunctionIngress
+metadata:
+  name: nodeinfo
+  namespace: openfaas
+spec:
+  domain: "api.example.com"
+  function: "nodeinfo"
+  ingressType: "nginx"
+  path: "/v1/nodeinfo/(.*)"
+  tls:
+    enabled: true
+    issuerRef:
+      name: "letsencrypt-staging"
+      kind: "Issuer"
+---
+apiVersion: openfaas.com/v1alpha2
+kind: FunctionIngress
+metadata:
+  name: env
+  namespace: openfaas
+spec:
+  domain: "api.example.com"
+  function: "env"
+  ingressType: "nginx"
+  path: "/v1/env/(.*)"
+  tls:
+    enabled: true
+    issuerRef:
+      name: "letsencrypt-staging"
+      kind: "Issuer"
+---
+apiVersion: openfaas.com/v1alpha2
+kind: FunctionIngress
+metadata:
+  name: certinfo
+  namespace: openfaas
+spec:
+  domain: "api.example.com"
+  function: "certinfo"
+  ingressType: "nginx"
+  path: "/v1/certinfo/(.*)"
+  tls:
+    enabled: true
+    issuerRef:
+      name: "letsencrypt-staging"
+      kind: "Issuer"
 ```
 
 #### What about IngressController X?

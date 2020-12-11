@@ -2,40 +2,39 @@
 
 ## Community resources
 
-Blog posts, upcoming/past events and code examples are available on the community resources page indexed by year.
-
-> Be counted: If you're speaking or have spoken about OpenFaaS or have a book, tutorial, blog post or workshop, please let the community know by raising a pull request to have it listed on this page.
+Blog posts, upcoming/past events and code examples are available on the community resources page indexed by year. Please send us a Pull Request!
 
 * [OpenFaaS Community Page](https://github.com/openfaas/faas/blob/master/community.md)
 
 ## Slack Workspace
 
-OpenFaaS has its own Slack workspace, which you are welcome to join.
+Guidelines for using Slack:
 
-Various channels are available for discussing how to use and contribute to OpenFaaS, additional sub-communities include topics like: 
+* When asking questions please be consider and use a thread
+* We can't answer questions like "why doesn't X work" unless you provide a snippet or GitHub repo to reproduce a problem
+* If you're a commercial user please let us know which company you're representing
 
-* `#general` - [k3sup](https://k3sup.dev/), [arkade app installer](https://get-arkade.dev/), Kubernetes and other general chit-chat about cloud / OSS
-* `#openfaas-cloud` OpenFaaS Cloud
-* `#inlets` - your Cloud Native Tunnel
-* `#derek` - GitHub automation through [Derek](https://github.com/alexellis/derek)
+Channels:
 
-Notes:
+* `#openfaas` - news, events, offers and questions relating to OpenFaaS
+* `#contributors` - contribute to projects maintained by the OpenFaaS commjunity
+* `#general` - OSS, Cloud Native, Kubernetes, containers, coding or [k3sup](https://k3sup.dev/) and [arkade app installer](https://get-arkade.dev/)
+* `#openfaas-cloud` - OpenFaaS Cloud development and help
+* `#inlets` - help, news and community for inlets - The Cloud Native Tunnel
 
-Members of the Slack workspace may be able to provide community-level support, but it's easy for topics to get depending on the time of posting and how detailed the question/comment is. If you do not receive a response to your message then please try again and note the following advice.
+Fill out [this form to join](https://goo.gl/forms/SqpLSdyzVoOboRqs1).
 
-It can be difficult to keep up with messages in the busier channels, therefore you are asked to keep your questions, comments and suggestions concise and to use [threads in Slack](https://slackhq.com/getting-the-most-out-of-threads).
+## Consulting and commercial users
 
-### Join Slack now
+Consulting and priority support is available [for OpenFaaS Ltd customers](https://openfaas.com/support/).
 
-Sign-up to join the OpenFaaS Slack workspace using [this form](https://goo.gl/forms/SqpLSdyzVoOboRqs1).
-
-## Insiders Track and GitHub Sponsors
+## Community Insiders Program and GitHub Sponsors
 
 Find out how you can get exclusive updates and offers directly from the project lead.
 
-Join 100+ other developers in supporting the continued work of OpenFaaS.
+Join 150+ other developers in supporting the continued work of OpenFaaS.
 
-[Become an Insider via GitHub Sponsors](https://github.com/openfaas/faas/blob/master/BACKERS.md)
+[Become an Insider via GitHub Sponsors](https://github.com/sponsors/alexellis)
 
 ## SWAG Store
 

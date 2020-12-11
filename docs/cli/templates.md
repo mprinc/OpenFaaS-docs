@@ -45,9 +45,7 @@ $ faas-cli template store list
 NAME                    SOURCE             DESCRIPTION
 csharp                  openfaas           Official C# template
 dockerfile              openfaas           Official Dockerfile template
-go-armhf                openfaas           Official Golang armhf 
 ...
-node10-express-armhf    openfaas-incubator NodeJS 10 Express armhf template
 node10-express          openfaas-incubator NodeJS 10 Express template
 ruby-http               openfaas-incubator Ruby 2.4 HTTP template
 golang-middleware       openfaas-incubator Golang Middleware template
@@ -67,8 +65,6 @@ Once downloaded, your chosen template and any others stored in the same reposito
 $ faas-cli new --list
 Languages available as templates:
 - node10-express
-- node10-express-arm64
-- node10-express-armhf
 ```
 
 You can add your own store just by specifying the `--url` flag for both commands to pull and list your custom templates store.
@@ -169,7 +165,6 @@ func Handle() {
 }
 ```
 
-
 Within your handler.go:
 
 ```golang
@@ -241,6 +236,18 @@ You can then enable CGO with a build-arg:
 faas-cli build --build-arg CGO_ENABLED=1
 ```
 
+#### Python 3 templates
+
+For production use, serving machine learning models, and high-traffic functions, it's advisable to use the newer templates built with flask and the OpenFaaS of-watchdog.
+
+See the [python-flask-template repo](https://github.com/openfaas-incubator/python-flask-template) for the following templates:
+
+* python27-flask
+* python3-flask
+* python3-flask-debian
+* python3-http
+* python3-http-debian
+
 #### Python 3 (classic template)
 
 To create a Python function named `pycon` type in:
@@ -270,10 +277,10 @@ The primary Python template uses Alpine Linux as a runtime environment due to it
 If you need to use pip modules that require compilation then you should try the python3-debian template then add your pip modules to the `requirements.txt` file.
 
 ```
-$ faas-cli template pull https://github.com/openfaas-incubator/python3-debian
+$ faas-cli template pull
 $ faas-cli new numpy-function --lang python3-debian
 $ echo "numpy" > ./numpy-function/requirements.txt
-$ faas-build -f ./numpy-function.yml
+$ faas-cli build -f ./numpy-function.yml
 ...
 
 Step 11/17 : RUN pip install -r requirements.txt
@@ -429,6 +436,48 @@ npm i --save cheerio
 
 You can now add a `require('cheerio')` statement into your function and make use of this library.
 
+
+#### Java
+
+Two Java templates are provided `java11` and `java11-vertx`, both of which use Gradle as the build system. Please note that the `java8` template is deprecated, and should not be used.
+
+> If you need a different version, then please fork the templates repository, or contact sales@openfaas.com to access additional templates via your OpenFaaS Premium Subscription.
+
+Support is made available for external code repositories via the build.gradle file where you specify dependencies to fetch from repositories or JAR files to be added via the build.
+
+* Write a function `java-function`:
+
+```
+$ faas-cli new --lang java11 java-function
+```
+
+* Write your code in:
+
+./src/main/Handler.java
+
+* Write `junit` tests in:
+
+./src/tests/
+
+* Update gradle config if needed in:
+
+./build.gradle
+./settings.gradle
+
+* Working with headers (advanced)
+
+You can view the code for the IRequest and IResponse in [the OpenFaaS templates-sdk](https://github.com/openfaas/templates-sdk/tree/master/java11/model/src/main/java/com/openfaas/model)
+
+You can use `getHeader(k)` on the Request interface to query a header.
+
+To set a header such as content-type you can use `setHeader(k, v)` on the Response interface.
+
+You can also run the following to create a function using Vert.x
+
+```bash
+$ faas-cli new --lang java11-vertx java-vertx-function
+```
+
 #### CSharp / .NET Core 2.1
 
 You can create functions in .NET Core 2.1 using C# / CSharp.
@@ -521,37 +570,6 @@ $ echo 'OpenFaaS' | faas-cli invoke ruby-function
          "is_answered" : false,
 ...
 ```
-
-#### Java (of-watchdog)
-
-Two Java templates are provided `java8` and `java12`, if you need a different version, then please fork the templates repo or request it from the community.
-
-Support is made available for external code repositories via the build.gradle file where you specify dependencies to fetch from repositories or JAR files to be added via the build.
-
-* Write a function `java-function`:
-
-```
-$ faas-cli new --lang java8 java-function
-```
-
-* Write your code in:
-
-./src/main/Handler.java
-
-* Write `junit` tests in:
-
-./src/tests/
-
-* Update gradle config if needed in:
-
-./build.gradle
-./settings.gradle
-
-* Working with headers
-
-You can use `getHeader(k)` on the Request interface to query a header.
-
-To set a header such as content-type you can use `setHeader(k, v)` on the Response interface.
 
 #### PHP7
 
@@ -668,14 +686,6 @@ Now the source of the store is changed to the URL you have specified above.
 
 ## ARM / Raspberry Pi
 
-Templates for ARM and Raspberry Pi are provided on a best-effort basis. If you can help with maintenance please let the project contributors know.
+It is possible to migrate to use multi-arch templates with OpenFaaS, feel free to ask the community for direction here.
 
-* ARMv7 / Raspberry Pi
-
-Type in `faas-cli new --list` and look for any languages ending in `-armhf`. You can use any of these for your functions.
-
-* ARM64 / Packet.net / Scaleway ARM 64-bit
-
-For these platforms do the same as above and look for the `-arm64` suffix.
-
-> It is easy to make your own templates so if you need to use this platform please convert one of the "regular" templates for your platform.
+Otherwise, for ARM and Raspberry Pi you will need to build on the device, and not on your PC or CI server.
